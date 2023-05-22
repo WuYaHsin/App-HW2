@@ -36,6 +36,7 @@ class MainActivity : AppCompatActivity() {
                 .setSingleChoiceItems(item, 0) { dialogInterface, i ->
                     airportindex = i
                 }
+
                 .setPositiveButton("確定") { dialog, which ->
                     Toast.makeText(this,"${item[airportindex]}", Toast.LENGTH_LONG).show()
                     var airport = item[airportindex].substring(0,3)

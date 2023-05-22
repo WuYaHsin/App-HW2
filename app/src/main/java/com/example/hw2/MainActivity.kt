@@ -3,19 +3,13 @@ package com.example.hw2
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.text.method.ScrollingMovementMethod
-import android.util.Log
 import android.widget.Button
 import android.widget.EditText
-import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
-import com.google.gson.Gson
-import com.google.gson.JsonObject
-import com.squareup.picasso.Picasso
 import okhttp3.*
 import java.io.IOException
-import com.google.gson.JsonParser
 import org.json.JSONArray
 import org.json.JSONObject
 
@@ -53,6 +47,7 @@ class MainActivity : AppCompatActivity() {
                 //儲存Token
                 val jsonObject0 = JSONObject(responseBody0)
                 val token = jsonObject0.get("access_token")
+                println("token=${token}")
                 //查詢機場代碼
                 val item = arrayOf(
                     "TPE 桃園", "TSA 松山", "CYI 嘉義", "CMJ 七美", "GNI 綠島", "HUN 花蓮",
@@ -62,14 +57,14 @@ class MainActivity : AppCompatActivity() {
                 var airportindex = 0
                 val button2 = findViewById<Button>(R.id.button2)
                 button2.setOnClickListener {
-                    AlertDialog.Builder(getApplicationContext())
+                    AlertDialog.Builder(this@MainActivity)
                         .setTitle("機場代碼")
                         .setSingleChoiceItems(item, 0) { dialogInterface, i ->
                             airportindex = i
                         }
 
                         .setPositiveButton("確定") { dialog, which ->
-                            Toast.makeText(getApplicationContext(), "${item[airportindex]}", Toast.LENGTH_LONG).show()
+                            Toast.makeText(this@MainActivity, "${item[airportindex]}", Toast.LENGTH_LONG).show()
                             var airport = item[airportindex].substring(0, 3)
                             var input = findViewById<EditText>(R.id.inputtext)
                             input.setText("${airport}")
@@ -81,6 +76,7 @@ class MainActivity : AppCompatActivity() {
                 button.setOnClickListener {
                     textView.text = ""
                     val client = OkHttpClient()
+
                     //[GET]URL
                     var airportID = ""
                     airportID = findViewById<EditText>(R.id.inputtext).text.toString()
@@ -91,7 +87,7 @@ class MainActivity : AppCompatActivity() {
                         .url(url)
                         .header(
                             "Authorization",
-                            "Bearer eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJER2lKNFE5bFg4WldFajlNNEE2amFVNm9JOGJVQ3RYWGV6OFdZVzh3ZkhrIn0.eyJleHAiOjE2ODQ4MjczNTcsImlhdCI6MTY4NDc0MDk1NywianRpIjoiMGI1NDgxOGItM2Y5Yy00YjkxLWE5MGItOGY4YjJjNjY3MjIyIiwiaXNzIjoiaHR0cHM6Ly90ZHgudHJhbnNwb3J0ZGF0YS50dy9hdXRoL3JlYWxtcy9URFhDb25uZWN0Iiwic3ViIjoiOGViMTFlMDUtNTc1MC00NmE2LThkNWMtZGMyNjYxZGQ4MTllIiwidHlwIjoiQmVhcmVyIiwiYXpwIjoiczA4NTMwMTItNDI2ZDU2MzMtMjMxZi00ZDQ5IiwiYWNyIjoiMSIsInJlYWxtX2FjY2VzcyI6eyJyb2xlcyI6WyJzdGF0aXN0aWMiLCJwcmVtaXVtIiwibWFhcyIsImFkdmFuY2VkIiwidmFsaWRhdG9yIiwiaGlzdG9yaWNhbCIsImJhc2ljIl19LCJzY29wZSI6InByb2ZpbGUgZW1haWwiLCJ1c2VyIjoiZWI2NzE3YTAifQ.fY0c4PgfS1Il_GVsTs3YOn3tHSYK5-TGafuq5YwTF5ZERl0VPjT1Tu3pTgPj8Fmva7Yo58krf3_Kd4ftgItrA4tHlyMuP02s_aCp0OILh23JVtLF0NcN-hqCBsmmd3q6x47EMdN-Yi1eWjbEiZTuTIANbfJqXcOV5iRQO6A-IVX6GfHK28MBfCAvmA5CKs0XDtGOO7NLdPF1DCq91xR8Zt6QYe74QTakCWdsNV4NO1eW4nowpLRyVzUhgVjhyme2XmBYutbqjSUWM_aXQah3Xu2OXmE__GkFt6135h-UL5Vp_0Rnvm6YYqPIEK1ehdNwgwHEUQ9zOCs3hysjW-cX-Q"
+                            "Bearer "+token
                         )
                         .build()
                     client.newCall(request).enqueue(object : Callback {
@@ -108,7 +104,6 @@ class MainActivity : AppCompatActivity() {
                                 val jsonObject = JSONArray(responseBody)
                                 var index = 0
                                 var count = 0
-                                var j = 0
 
 
                                 for (i in 0 until jsonObject.length()) {
